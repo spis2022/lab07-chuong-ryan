@@ -6,8 +6,43 @@ from nltk.classify import NaiveBayesClassifier
 from nltk.corpus import stopwords
 from nltk.classify.util import accuracy
 
+import random
+
 # "Stop words" that you might want to use in your project/an extension
 stop_words = set(stopwords.words('english'))
+
+
+def train(s):
+    words = s.split()
+    dictionary = dict()
+    for i in range(len(words)-1):
+        word = words[i]
+        if word not in dictionary:
+            dictionary[word] = [words[i + 1]]
+        else:
+            dictionary[word].append(words[i+1])
+    word = words[len(words) - 1]
+    if word not in dictionary:
+        dictionary[word] = []
+    else:
+        dictionary[word].append(word)
+    return dictionary
+
+# print(train("Yeah baby I like it like that You gotta believe me when I tell you I said I like it like nine"))
+
+cardi_B = train("Yeah baby I like it like that You gotta believe me when I tell you I said I like it like that")
+
+def generate(model, first_word, num_words):
+    text = first_word
+    current_word = first_word
+    for i in range(num_words-1):
+        next_word = random.choice(model[current_word])
+        text += ' ' + next_word
+        current_word = next_word
+    return text
+    
+print(generate(cardi_B, "You", 15))
+
 
 def format_sentence(sent):
     ''' format the text setence as a bag of words for use in nltk'''
