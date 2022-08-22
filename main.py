@@ -41,7 +41,7 @@ def generate(model, first_word, num_words):
         current_word = next_word
     return text
     
-print(generate(cardi_B, "You", 15))
+# print(generate(cardi_B, "You", 15))
 
 
 def format_sentence(sent):
@@ -62,7 +62,17 @@ def split_train_test(data, train_prop):
         output: A tuple of two lists, (training, testing)
     '''
     # TODO: You will write this function, and change the return value
-    return ([], [])
+    length = int(len(data) * train_prop)
+    list_1 = []
+    list_2 = []
+    for i in range(len(data)):
+        if i < length:
+            list_1 += data[i]
+        else:
+            list_2 += data[i]
+    return (list_1, list_2)
+
+# print(split_train_test(["A", "B", "C", "D"], 0.99))
 
 def format_for_classifier(data_list, label):
     ''' input: A list of documents represented as text strings
@@ -72,7 +82,13 @@ def format_for_classifier(data_list, label):
                 [format_sentence(doc), label]
     '''
     # TODO: Write this function, change the return value
-    return []
+    final_list = []
+    for data in data_list:
+        sublist = [format_sentence(data), label]
+        final_list.append(sublist)
+    return final_list
+
+print(format_for_classifier(["A good one", "The best!"], "pos"))
 
 def classify_reviews():
     ''' Perform sentiment classification on movie reviews ''' 
@@ -107,11 +123,11 @@ def classify_reviews():
 
     # Train a Naive Bayes Classifier
     # Uncomment the next line once the code above is working
-    #classifier = NaiveBayesClassifier.train(training)
+    classifier = NaiveBayesClassifier.train(training)
 
     # Uncomment the next two lines once everything above is working
-    #print("Accuracy of the classifier is: " + str(accuracy(classifier, test)))
-    #classifier.show_most_informative_features()
+    print("Accuracy of the classifier is: " + str(accuracy(classifier, test)))
+    classifier.show_most_informative_features()
 
     # TODO: Calculate and print the accuracy on the positive and negative
     # documents separately
