@@ -15,20 +15,30 @@ stop_words = set(stopwords.words('english'))
 def train(s):
     words = s.split()
     dictionary = dict()
+    starting_word = [words[0]]
+    dictionary["$"] = starting_word
     for i in range(len(words)-1):
-        word = words[i]
-        if word not in dictionary:
-            dictionary[word] = [words[i + 1]]
+        cur_word = words[i]
+        next_word = words[i+1]
+        if cur_word.endswith('.'):
+            starting_word.append(next_word)
+            dictionary[cur_word] = ["$"]
+        elif cur_word not in dictionary:
+                dictionary[cur_word] = [next_word]
         else:
-            dictionary[word].append(words[i+1])
+            if next_word.endswith('.'):
+                dictionary[cur_word].append(next_word.replace(".", ""))
+            else:
+                dictionary[cur_word].append(next_word)
+             
     word = words[len(words) - 1]
     if word not in dictionary:
         dictionary[word] = []
     else:
-        dictionary[word].append(word)
+        dictionary[word].append("$")
     return dictionary
 
-# print(train("Yeah baby I like it like that You gotta believe me when I tell you I said I like it like nine"))
+print(train("Yeah baby I like it like that. You gotta believe me when I tell you I said I like it like that."))
 
 cardi_B = train("Yeah baby I like it like that You gotta believe me when I tell you I said I like it like that")
 
@@ -88,7 +98,7 @@ def format_for_classifier(data_list, label):
         final_list.append(sublist)
     return final_list
 
-print(format_for_classifier(["A good one", "The best!"], "pos"))
+# print(format_for_classifier(["A good one", "The best!"], "pos"))
 
 def classify_reviews():
     ''' Perform sentiment classification on movie reviews ''' 
@@ -126,8 +136,8 @@ def classify_reviews():
     classifier = NaiveBayesClassifier.train(training)
 
     # Uncomment the next two lines once everything above is working
-    print("Accuracy of the classifier is: " + str(accuracy(classifier, test)))
-    classifier.show_most_informative_features()
+    # print("Accuracy of the classifier is: " + str(accuracy(classifier, test)))
+    # classifier.show_most_informative_features()
 
     # TODO: Calculate and print the accuracy on the positive and negative
     # documents separately
